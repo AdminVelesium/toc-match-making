@@ -1,0 +1,5 @@
+JWT_SECRET=oaAPJOIlJNQOPwirn9qwirhnokbnzsr08ehiriLKNdiouAWr9u
+MONGO_URI=mongodb+srv://TOC:biuSQXYetM4ghdcM@toc.snv5hpq.mongodb.net/?retryWrites=true&w=majority&appName=TOC
+PORT=5000
+FRONTEND_URL=https://toc-frontend-one.vercel.app/
+VITE_API_URL=https://toc-bac-1.onrender.com
