@@ -2,7 +2,7 @@ name: Deploy Flask App to GCP VM
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master" ]  # or "main" if you're using that
 
 jobs:
   deploy:
@@ -32,24 +32,18 @@ jobs:
         host: ${{ secrets.GCP_HOST }}
         username: ${{ secrets.GCP_USER }}
         key: ${{ secrets.GCP_SSH_KEY }}
+        port: 22
         script: |
+          echo "🔁 Entering project folder"
           cd ~/toc-match-making
 
-          # Remove old virtualenv if exists
+          echo "🧹 Removing old virtual environment"
           rm -rf venv
 
-          # Create new virtualenv
+          echo "🐍 Creating new virtual environment"
           python3 -m venv venv
           source venv/bin/activate
 
-          # Install packages
-          pip install -r requirements.txt
-
-          # Write your API key into .env file
-          echo 'GEMINI_API_KEY="AIzaSyD9LTTrXmvjzoV0vPOK7RVJSBv10tE7G1w"' > .env
-
-          # Kill old running app if any
-          pkill -f "python app.py" || true
-
-          # Start app in background
-          nohup venv/bin/python app.py > output.log 2>&1 &
+          echo "📦 Installing dependencies"
+          pip install --upgrade pip
+          pip i
