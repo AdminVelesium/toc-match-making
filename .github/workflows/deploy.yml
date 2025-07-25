@@ -2,7 +2,7 @@ name: Deploy Flask App to GCP VM
 
 on:
   push:
-    branches: [ "master" ]  # or "main" if you're using that
+    branches: [ "master" ] 
 
 jobs:
   deploy:
@@ -34,17 +34,17 @@ jobs:
         key: ${{ secrets.GCP_SSH_KEY }}
         port: 22
         script: |
-          echo "🔁 Entering project folder"
+          echo "Entering project folder"
           cd ~/toc-match-making
 
-          echo "🧹 Removing old virtual environment"
+          echo "Removing old virtual environment"
           rm -rf venv
 
-          echo "🐍 Creating new virtual environment"
+          echo "Creating new virtual environment"
           python3 -m venv venv
           source venv/bin/activate
 
-          echo "📦 Installing dependencies"
+          echo "Installing dependencies"
           pip install --upgrade pip
           pip install -r requirements.txt
 
