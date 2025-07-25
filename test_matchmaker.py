@@ -1,7 +1,7 @@
 import requests
 import json
 
-url = "http://127.0.0.1:8000/match"
+url = "http://104.197.209.248:5001/match"
 
 payload = {
   "candidate_details": {

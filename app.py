@@ -25,6 +25,61 @@ app = Flask(__name__)
 GEMINI_EMBEDDING_API_URL = (
     "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent"
 )
+GEMINI_MODEL = 'gemini-2.5-flash'
+GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
+
+
+@app.route('/generate_job_description', methods=['POST'])
+def generate_job_description():
+    user_prompt = request.json.get('prompt')
+
+    if not user_prompt:
+        return jsonify({"error": "No prompt provided"}), 400
+
+    headers = {
+        "Content-Type": "application/json",
+        "x-goog-api-key": GEMINI_API_KEY
+    }
+
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "text": f"As an expert HR professional, generate a comprehensive and engaging job description based on the following details. Include sections like Job Title, Responsibilities, Qualifications, and Benefits. Make it suitable for an online job board:\n\n'{user_prompt}'"
+                    }
+                ]
+            }
+        ]
+    }
+
+    try:
+        response = requests.post(GEMINI_API_URL, headers=headers, json=payload)
+        response.raise_for_status()  # Raise an exception for bad status codes (4xx or 5xx)
+        
+        gemini_response = response.json()
+        
+        # Extract the generated text from the Gemini response
+        job_description = ""
+        if "candidates" in gemini_response and gemini_response["candidates"]:
+            for part in gemini_response["candidates"][0]["content"]["parts"]:
+                if "text" in part:
+                    job_description += part["text"]
+
+        if job_description:
+            return jsonify({"job_description": job_description})
+        else:
+            return jsonify({"error": "Failed to generate job description from Gemini API. Response may be empty or malformed."}), 500
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": f"Error communicating with Gemini API: {e}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"An unexpected error occurred: {e}"}), 500
+
+
+
+
+
 
 def get_embedding(text):
     """
@@ -95,6 +150,13 @@ def calculate_match_score(candidate_text, job_text):
         interpretation = "Low Match. The candidate's profile does not strongly align with the job description."
 
     return score, interpretation
+
+
+
+
+
+
+
 
 @app.route('/match', methods=['POST'])
 def match_api():
